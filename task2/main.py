@@ -88,6 +88,33 @@ def TSP(graph, v, currPos, n, count, cost, order):
             v[i] = False
 
 
+def print_road(places, src, dst):
+    print(places[c(src)], ' -> ', places[c(dst)])
+
+
+def min_spanning_tree(W, n):
+    length = [W[0][i] for i in range(n)]
+    vselected = [False] * n
+    nearest = [0] * n
+
+    for _ in range(n):
+        MIN = INF
+
+        for i in range(n):
+            if not vselected[i] and length[i] < MIN:
+                MIN = length[i]
+                vnear = i
+
+        vselected[vnear] = True
+
+        for i in range(n):
+            if not vselected[i] and W[i][vnear] < length[i]:
+                length[i] = W[i][vnear]
+                nearest[i] = vnear
+
+    return length, nearest
+
+
 if __name__ == "__main__":
 
     with open("task2/places.json", "r") as f:
@@ -107,6 +134,7 @@ if __name__ == "__main__":
     src = find_place(places, 'Parking')
     dst = find_place(places, 'University')
 
+    # task 2-1
     if dst == -1:
         print('Invalid place name')
 
@@ -117,7 +145,7 @@ if __name__ == "__main__":
         for path in paths:
             print_path(places, path)
 
-    # task2-2
+    # task 2-2
     answer = []
     solutions = []
     src = find_place(places, 'Hospital')
@@ -145,3 +173,9 @@ if __name__ == "__main__":
 
     for way in nodes:
         print_path(places, way)
+
+    # task 3
+    length, nearest = min_spanning_tree(roads, n)
+    print('Min length: ', sum(length))
+    for i in range(1, n):
+        print_road(places, nearest[i], i)
