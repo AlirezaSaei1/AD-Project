@@ -21,3 +21,4 @@ E J 10
 D G 9
 G H 4
 H I 1
+I J 3
