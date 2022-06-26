@@ -1,7 +1,11 @@
 import json
 from collections import deque
-from msilib.schema import Error
 INF = float('inf')
+
+
+def printMatrix(matrix):
+    for row in matrix:
+        print(*row)
 
 
 def o(c):
@@ -68,6 +72,22 @@ def find_place(places, place_name):
     return -1
 
 
+def TSP(graph, v, currPos, n, count, cost, order):
+    if (count == n and graph[currPos][src]):
+        answer.append(cost + graph[currPos][src])
+        solutions.append(" ".join([str(element) for element in order]))
+        return
+
+    for i in temp:
+        if (v[i] == False and graph[currPos][i]):
+            v[i] = True
+            order.append(i)
+            TSP(graph, v, i, n, count + 1,
+                cost + graph[currPos][i], order)
+            order.remove(i)
+            v[i] = False
+
+
 if __name__ == "__main__":
 
     with open("task2/places.json", "r") as f:
@@ -96,3 +116,32 @@ if __name__ == "__main__":
         print('Shortest path lenght: ', length[dst])
         for path in paths:
             print_path(places, path)
+
+    # task2-2
+    answer = []
+    solutions = []
+    src = find_place(places, 'Hospital')
+    toTraverse = [find_place(places, 'Park'), find_place(
+        places, 'Terminal'), find_place(places, 'Restaurant')]
+
+    temp = toTraverse
+    temp.append(src)
+
+    v = [False for _ in range(n)]
+    v[src] = True
+
+    TSP(roads, v, src, len(temp), 1, 0, [])
+
+    x = min(answer)
+    print("Length of Path:", x)
+    nodes = []
+
+    for i in range(len(answer)):
+        if x == answer[i]:
+            temp_list = [src]
+            temp_list.extend(list(map(int, solutions[i].split(" "))))
+            temp_list.append(src)
+            nodes.append(temp_list)
+
+    for way in nodes:
+        print_path(places, way)
