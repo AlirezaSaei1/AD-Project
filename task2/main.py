@@ -7,7 +7,7 @@ def o(c):
     return ord(c) - ord('A')
 
 
-def c(o):
+def city(o):
     return chr(o + ord('A'))
 
 
@@ -40,7 +40,7 @@ def dijkstra(W, n, src):
 
 
 def print_path(places, path):
-    print(' -> '.join([places[c(place)] for place in path]))
+    print(' -> '.join([places[city(place)] for place in path]))
 
 
 def find_paths(parents, src, dst):
@@ -68,7 +68,26 @@ def find_place(places, place_name):
 
 
 def print_road(places, src, dst):
-    print(places[c(src)], ' -> ', places[c(dst)])
+    print(places[city(src)], ' -> ', places[city(dst)])
+
+
+# def TSP(W, n, city, visited, path, cost=0):
+#     MIN = INF
+
+#     for i in range(n):
+#         if not visited[i] and W[city][i] + W[i][city] < MIN:
+#             MIN = W[i][city] + W[city][i]
+#             cnear = i
+
+#     if MIN != INF:
+#         visited[cnear] = True
+#         path.append(cnear)
+#         cost += W[city][cnear]
+#         return TSP(W, n, cnear, visited, path, cost)
+#     else:
+#         path.append(src)
+#         cost += W[city][src]
+#         return cost
 
 
 def min_spanning_tree(W, n):
@@ -123,6 +142,19 @@ if __name__ == "__main__":
         print('Shortest path lenght: ', length[dst])
         for path in paths:
             print_path(places, path)
+
+    # task 2-2
+    
+    # src = find_place(places, 'Hospital')
+    # pathway = ['Park', 'Terminal', 'Restaurant']
+    # path = [src]
+    # visited = [True] * n
+    # for way in pathway:
+    #     visited[find_place(places, way)] = False
+
+    # cost = TSP(roads, n, src, visited, path)
+    # print("Min Length: ", cost)
+    # print_path(places, path)
 
     # task 3
     length, nearest = min_spanning_tree(roads, n)
