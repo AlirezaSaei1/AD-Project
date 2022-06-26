@@ -14,6 +14,13 @@ def printMatrix(matrix):
         print(*row)
 
 
+def matrixToString():
+    st = ""
+    for x in matrix:
+        st += "".join(str(c) for c in x)
+    return st
+
+
 def getDimension(n):
     row = size[0] - ((n-1) // size[1]) - 1
     column = (n - 1) % size[1]
@@ -23,27 +30,42 @@ def getDimension(n):
 
 def buildMatrix():
     matrix = [[0 for _ in range(size[1])] for _ in range(size[0])]
-    ic, jc = getDimension(camera)
-    matrix[ic][jc] = "C"
+    i, j = getDimension(camera)
+    matrix[i][j] = "C"
 
     count = 1
     for car in cars:
-        i1, j1 = getDimension(car[0])
-        i2, j2 = getDimension(car[1])
-        matrix[i1][j1] = count
-        matrix[i2][j2] = count
+        for pos in car:
+            i, j = getDimension(pos)
+            matrix[i][j] = count
         count += 1
     return matrix
 
 
-def solve():
-    if matrix[it][jt] == 0:
-        return True
+def solve(i, j):
+    if promising(i, j):
+        if (i, j) == getDimension(target):
+            print('Solved')
+            return
+        else:
+            for dir in moves:
+                pass
 
-    for c in cars:
-        pass
 
+def promising(i, j):
+    if i < 0 or j < 0 or i >= size[0] or j >= size[1]:
+        return False
+
+    if (i, j) == getDimension(camera):
+        return False
+
+    return matrixToString() not in history
+
+
+history = []
+moves = [(0, -1), (-1, 0), (0, 1), (1, 0)]
 
 matrix = buildMatrix()
 printMatrix(matrix)
 it, jt = getDimension(target)
+solve(it, jt)
