@@ -7,7 +7,7 @@ def o(c):
     return ord(c) - ord('A')
 
 
-def city(o):
+def c(o):
     return chr(o + ord('A'))
 
 
@@ -40,7 +40,7 @@ def dijkstra(W, n, src):
 
 
 def print_path(places, path):
-    print(' -> '.join([places[city(place)] for place in path]))
+    print(' -> '.join([places[c(place)] for place in path]))
 
 
 def find_paths(parents, src, dst):
@@ -68,7 +68,7 @@ def find_place(places, place_name):
 
 
 def print_road(places, src, dst):
-    print(places[city(src)], ' -> ', places[city(dst)])
+    print(places[c(src)], ' -> ', places[c(dst)])
 
 
 def TSP(W, n, curr, visited, path, cost, rem, answer):
