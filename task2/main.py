@@ -1,5 +1,6 @@
 import json
 from collections import deque
+from unittest import result
 INF = float('inf')
 
 
@@ -12,7 +13,7 @@ def o(c):
     return ord(c) - ord('A')
 
 
-def c(o):
+def city(o):
     return chr(o + ord('A'))
 
 
@@ -45,7 +46,7 @@ def dijkstra(W, n, src):
 
 
 def print_path(places, path):
-    print(' -> '.join([places[c(place)] for place in path]))
+    print(' -> '.join([places[city(place)] for place in path]))
 
 
 def find_paths(parents, src, dst):
@@ -72,24 +73,40 @@ def find_place(places, place_name):
     return -1
 
 
-def TSP(graph, v, currPos, n, count, cost, order):
-    if (count == n and graph[currPos][src]):
-        answer.append(cost + graph[currPos][src])
-        solutions.append(" ".join([str(element) for element in order]))
+def print_road(places, src, dst):
+    print(places[city(src)], ' -> ', places[city(dst)])
+
+def TSP(W, n, city, visited, path, cost, count, total, answer):
+    if count == total and W[city][src]:
+        answer.append((cost + W[city][src] , path + [src]))
         return
 
-    for i in temp:
-        if (v[i] == False and graph[currPos][i]):
-            v[i] = True
-            order.append(i)
-            TSP(graph, v, i, n, count + 1,
-                cost + graph[currPos][i], order)
-            order.remove(i)
-            v[i] = False
+    for c in range(n):
+        if not visited[c] and W[city][c]:
+            visited[c] = True
+            path.append(c)
+            TSP(W, n, c, visited, path, cost + W[city][c], count+1, total, answer)
+            path.remove(c)
+            visited[c] = False
 
 
-def print_road(places, src, dst):
-    print(places[c(src)], ' -> ', places[c(dst)])
+# def TSP2(W, n, city, visited, path, cost=0):
+#     MIN = INF
+
+#     for i in range(n):
+#         if not visited[i] and W[city][i] + W[i][city] < MIN:
+#             MIN = W[i][city] + W[city][i]
+#             cnear = i
+
+#     if MIN != INF:
+#         visited[cnear] = True
+#         path.append(cnear)
+#         cost += W[city][cnear]
+#         return TSP2(W, n, cnear, visited, path, cost)
+#     else:
+#         path.append(src)
+#         cost += W[city][src]
+#         return cost
 
 
 def min_spanning_tree(W, n):
@@ -145,34 +162,26 @@ if __name__ == "__main__":
         for path in paths:
             print_path(places, path)
 
-    # task 2-2
-    answer = []
-    solutions = []
+    # task 2-2    
     src = find_place(places, 'Hospital')
-    toTraverse = [find_place(places, 'Park'), find_place(
-        places, 'Terminal'), find_place(places, 'Restaurant')]
+    pathway = ['Park', 'Terminal', 'Restaurant']
+    path = [src]
+    visited = [True] * n
+    for way in pathway:
+        visited[find_place(places, way)] = False
 
-    temp = toTraverse
-    temp.append(src)
+    answer = []
+    TSP(roads, n, src, visited, path, 0, 0, len(pathway), answer)
+    cost, path = min(answer)
+    
+    # cost = TSP2(roads, n, src, visited, path)
+    # print("Min Length: ", cost)
+    # print_path(places, path)
 
-    v = [False for _ in range(n)]
-    v[src] = True
-
-    TSP(roads, v, src, len(temp), 1, 0, [])
-
-    x = min(answer)
-    print("Length of Path:", x)
-    nodes = []
-
-    for i in range(len(answer)):
-        if x == answer[i]:
-            temp_list = [src]
-            temp_list.extend(list(map(int, solutions[i].split(" "))))
-            temp_list.append(src)
-            nodes.append(temp_list)
-
-    for way in nodes:
-        print_path(places, way)
+    for c, p in answer:
+        if c == cost:
+            print('Min Length: ', c)
+            print_path(places, p)
 
     # task 3
     length, nearest = min_spanning_tree(roads, n)
