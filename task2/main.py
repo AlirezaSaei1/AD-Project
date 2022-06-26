@@ -1,6 +1,12 @@
 import json
 from collections import deque
+from unittest import result
 INF = float('inf')
+
+
+def printMatrix(matrix):
+    for row in matrix:
+        print(*row)
 
 
 def o(c):
@@ -70,8 +76,21 @@ def find_place(places, place_name):
 def print_road(places, src, dst):
     print(places[city(src)], ' -> ', places[city(dst)])
 
+def TSP(W, n, city, visited, path, cost, count, total, answer):
+    if count == total and W[city][src]:
+        answer.append((cost + W[city][src] , path + [src]))
+        return
 
-# def TSP(W, n, city, visited, path, cost=0):
+    for c in range(n):
+        if not visited[c] and W[city][c]:
+            visited[c] = True
+            path.append(c)
+            TSP(W, n, c, visited, path, cost + W[city][c], count+1, total, answer)
+            path.remove(c)
+            visited[c] = False
+
+
+# def TSP2(W, n, city, visited, path, cost=0):
 #     MIN = INF
 
 #     for i in range(n):
@@ -83,7 +102,7 @@ def print_road(places, src, dst):
 #         visited[cnear] = True
 #         path.append(cnear)
 #         cost += W[city][cnear]
-#         return TSP(W, n, cnear, visited, path, cost)
+#         return TSP2(W, n, cnear, visited, path, cost)
 #     else:
 #         path.append(src)
 #         cost += W[city][src]
@@ -143,18 +162,26 @@ if __name__ == "__main__":
         for path in paths:
             print_path(places, path)
 
-    # task 2-2
-    
-    # src = find_place(places, 'Hospital')
-    # pathway = ['Park', 'Terminal', 'Restaurant']
-    # path = [src]
-    # visited = [True] * n
-    # for way in pathway:
-    #     visited[find_place(places, way)] = False
+    # task 2-2    
+    src = find_place(places, 'Hospital')
+    pathway = ['Park', 'Terminal', 'Restaurant']
+    path = [src]
+    visited = [True] * n
+    for way in pathway:
+        visited[find_place(places, way)] = False
 
-    # cost = TSP(roads, n, src, visited, path)
+    answer = []
+    TSP(roads, n, src, visited, path, 0, 0, len(pathway), answer)
+    cost, path = min(answer)
+    
+    # cost = TSP2(roads, n, src, visited, path)
     # print("Min Length: ", cost)
     # print_path(places, path)
+
+    for c, p in answer:
+        if c == cost:
+            print('Min Length: ', c)
+            print_path(places, p)
 
     # task 3
     length, nearest = min_spanning_tree(roads, n)
