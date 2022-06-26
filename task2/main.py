@@ -3,6 +3,11 @@ from collections import deque
 INF = float('inf')
 
 
+def printMatrix(matrix):
+    for row in matrix:
+        print(*row)
+
+
 def o(c):
     return ord(c) - ord('A')
 
@@ -67,6 +72,22 @@ def find_place(places, place_name):
     return -1
 
 
+def TSP(graph, v, currPos, n, count, cost, order):
+    if (count == n and graph[currPos][src]):
+        answer.append(cost + graph[currPos][src])
+        solutions.append(" ".join([str(element) for element in order]))
+        return
+
+    for i in temp:
+        if (v[i] == False and graph[currPos][i]):
+            v[i] = True
+            order.append(i)
+            TSP(graph, v, i, n, count + 1,
+                cost + graph[currPos][i], order)
+            order.remove(i)
+            v[i] = False
+
+
 def print_road(places, src, dst):
     print(places[c(src)], ' -> ', places[c(dst)])
 
@@ -123,6 +144,35 @@ if __name__ == "__main__":
         print('Shortest path lenght: ', length[dst])
         for path in paths:
             print_path(places, path)
+
+    # task 2-2
+    answer = []
+    solutions = []
+    src = find_place(places, 'Hospital')
+    toTraverse = [find_place(places, 'Park'), find_place(
+        places, 'Terminal'), find_place(places, 'Restaurant')]
+
+    temp = toTraverse
+    temp.append(src)
+
+    v = [False for _ in range(n)]
+    v[src] = True
+
+    TSP(roads, v, src, len(temp), 1, 0, [])
+
+    x = min(answer)
+    print("Length of Path:", x)
+    nodes = []
+
+    for i in range(len(answer)):
+        if x == answer[i]:
+            temp_list = [src]
+            temp_list.extend(list(map(int, solutions[i].split(" "))))
+            temp_list.append(src)
+            nodes.append(temp_list)
+
+    for way in nodes:
+        print_path(places, way)
 
     # task 3
     length, nearest = min_spanning_tree(roads, n)
