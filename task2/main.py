@@ -1,6 +1,5 @@
 import json
 from collections import deque
-from unittest import result
 INF = float('inf')
 
 
@@ -76,36 +75,37 @@ def find_place(places, place_name):
 def print_road(places, src, dst):
     print(places[city(src)], ' -> ', places[city(dst)])
 
-def TSP(W, n, city, visited, path, cost, count, total, answer):
-    if count == total and W[city][src]:
-        answer.append((cost + W[city][src] , path + [src]))
+
+def TSP(W, n, curr, visited, path, cost, rem, answer):
+    if rem == 0:
+        answer.append((cost + W[curr][src], path + [src]))
         return
 
-    for c in range(n):
-        if not visited[c] and W[city][c]:
-            visited[c] = True
-            path.append(c)
-            TSP(W, n, c, visited, path, cost + W[city][c], count+1, total, answer)
-            path.remove(c)
-            visited[c] = False
+    for next in range(n):
+        if not visited[next]:
+            visited[next] = True
+            path.append(next)
+            TSP(W, n, next, visited, path, cost + W[curr][next], rem-1, answer)
+            visited[next] = False
+            path.remove(next)
 
 
-# def TSP2(W, n, city, visited, path, cost=0):
+# def TSP2(W, n, curr, visited, path, cost):
 #     MIN = INF
 
 #     for i in range(n):
-#         if not visited[i] and W[city][i] + W[i][city] < MIN:
-#             MIN = W[i][city] + W[city][i]
-#             cnear = i
+#         if not visited[i] and W[curr][i] + W[i][curr] < MIN:
+#             MIN = W[i][curr] + W[curr][i]
+#             next = i
 
 #     if MIN != INF:
-#         visited[cnear] = True
-#         path.append(cnear)
-#         cost += W[city][cnear]
-#         return TSP2(W, n, cnear, visited, path, cost)
+#         visited[next] = True
+#         path.append(next)
+#         cost += W[curr][next]
+#         return TSP2(W, n, next, visited, path, cost)
 #     else:
 #         path.append(src)
-#         cost += W[city][src]
+#         cost += W[curr][src]
 #         return cost
 
 
@@ -162,7 +162,7 @@ if __name__ == "__main__":
         for path in paths:
             print_path(places, path)
 
-    # task 2-2    
+    # task 2-2
     src = find_place(places, 'Hospital')
     pathway = ['Park', 'Terminal', 'Restaurant']
     path = [src]
@@ -171,17 +171,17 @@ if __name__ == "__main__":
         visited[find_place(places, way)] = False
 
     answer = []
-    TSP(roads, n, src, visited, path, 0, 0, len(pathway), answer)
+    TSP(roads, n, src, visited, path, 0, len(pathway), answer)
     cost, path = min(answer)
-    
-    # cost = TSP2(roads, n, src, visited, path)
-    # print("Min Length: ", cost)
-    # print_path(places, path)
 
     for c, p in answer:
         if c == cost:
             print('Min Length: ', c)
             print_path(places, p)
+
+    # cost = TSP2(roads, n, src, visited, path, 0)
+    # print("Min Length: ", cost)
+    # print_path(places, path)
 
     # task 3
     length, nearest = min_spanning_tree(roads, n)
