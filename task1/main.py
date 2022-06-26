@@ -9,12 +9,6 @@ camera = data['camera']
 cars = data['cars']
 
 
-def print_matrix(matrix):
-    for row in matrix:
-        print(*row)
-    print()
-
-
 def dimension(pos):
     row = n - ((pos-1) // m) - 1
     column = (pos - 1) % m
@@ -44,7 +38,7 @@ def hist():
     stamp = ''
     for row in range(n):
         for column in range(m):
-            stamp = stamp + str(matrix[row][column])
+            stamp += str(matrix[row][column])
     return stamp
 
 
@@ -57,30 +51,34 @@ ways = []
 
 
 def solve(i, j):
-    if promising(i, j):
-        if (i, j) == dimension(target):
-            ways.append((len(answer), answer.copy()))
-            return
-        else:
-            for dir in dirs:
-                x, y = i+dir[0], j+dir[1]
+    if (i, j) == dimension(target): # target cell is empty
+        ways.append((len(answer), answer.copy()))   # append answer as a solution
+        return
+    else:
+        for dir in dirs: # top down left right
+            x, y = i+dir[0], j+dir[1] 
+            if promising(x, y):
+                car = cars[matrix[x][y]-1]
+                # (x, y) will be position of the end of the car
+                x = i + len(car) * dir[0]
+                y = j + len(car) * dir[1]
                 if promising(x, y):
-                    car = cars[matrix[x][y]-1]
-                    x = i + len(car) * dir[0]
-                    y = j + len(car) * dir[1]
-                    if promising(x, y):
-                        if len(car) == 1 or\
-                                vertical(car) and dir in [(-1, 0), (1, 0)] or\
-                                not vertical(car) and dir in [(0, -1), (0, 1)]:
-                            history.append(hist())
-                            matrix[i][j] = matrix[x][y]
-                            matrix[x][y] = 0
-                            answer.append(matrix[i][j])
-                            solve(x, y)
-                            answer.remove(matrix[i][j])
-                            matrix[x][y] = matrix[i][j]
-                            matrix[i][j] = 0
-                            history.remove(hist())
+                    # cars with length 1 can move in all directions
+                    # horizontal cars only moves horizontally
+                    # verticall cars only move vertically
+                    if len(car) == 1 or\
+                            vertical(car) and dir in [(-1, 0), (1, 0)] or\
+                            not vertical(car) and dir in [(0, -1), (0, 1)]:
+                        history.append(hist())
+                        # swap end of car with empty cell
+                        matrix[i][j], matrix[x][y] = matrix[x][y], matrix[i][j] 
+                        # add this car to answer as moved car
+                        answer.append(matrix[i][j])
+                        # solve for next empty cell
+                        solve(x, y)
+                        answer.remove(matrix[i][j])
+                        matrix[x][y], matrix[i][j] = matrix[i][j], matrix[x][y] # bactrackt
+                        history.remove(hist())
 
 
 def promising(i, j):
@@ -93,15 +91,16 @@ def promising(i, j):
     return hist() not in history
 
 
-matrix = build_matrix()
-it, jt = dimension(target)
+if __name__ == "__main__":
+    matrix = build_matrix()
 
-i = 0
-while 0 not in matrix[i]:
-    i += 1
-j = matrix[i].index(0)
+    # (i, j) will be the position of initial empty cell
+    i = 0
+    while 0 not in matrix[i]:
+        i += 1
+    j = matrix[i].index(0)
 
-solve(i, j)
-moves, way = min(ways)
-print('Min moves: ', moves)
-print('Cars: ', way)
+    solve(i, j)
+    moves, way = min(ways)
+    print('Min moves: ', moves)
+    print('Cars: ', way)
