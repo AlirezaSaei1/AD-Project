@@ -1,12 +1,12 @@
 {
-    "Parking" : "A",
-    "Mall" : "B",
-    "Hospital" : "C",
-    "Park" : "D",
-    "Terminal" : "E",
-    "Airport" : "F",
-    "Restaurant" : "G",
-    "School" : "H",
-    "Office" : "I",
-    "University" : "J"
+    "A" : "Parking",
+    "B" : "Mall",
+    "C" : "Hospital",
+    "D" : "Park",
+    "E" : "Terminal",
+    "F" : "Airport",
+    "G" : "Restaurant",
+    "H" : "School",
+    "I" : "Office",
+    "J" : "University"
 }
